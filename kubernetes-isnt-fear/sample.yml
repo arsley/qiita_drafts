@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    web: nginx-pod-label
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx:1.12
+
+---
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: redis-replicaset
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      redis: redis-replicaset-label
+  template:
+    metadata:
+      labels:
+        redis: redis-replicaset-label
+    spec:
+      containers:
+        - name: redis-container
+          image: redis:5.0
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-replicaset
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      httpd: httpd-replicaset-label
+  template:
+    metadata:
+      labels:
+        httpd: httpd-replicaset-label
+    spec:
+      containers:
+        - name: httpd-container
+          image: httpd:2.4
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-lb
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "http-port"
+    protocol: "TCP"
+    port: 8080
+    targetPort: 80
+  selector:
+    web: nginx-pod-label

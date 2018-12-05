@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      httpd: httpd-deployment-label
+  template:
+    metadata:
+      labels:
+        httpd: httpd-deployment-label
+    spec:
+      containers:
+        - name: httpd-container
+          image: httpd:2.4.37
